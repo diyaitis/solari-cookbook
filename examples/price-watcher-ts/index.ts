@@ -56,11 +56,20 @@ function parsePrice(text: string): number | null {
 async function notify(message: string) {
   console.log(`ALERT: ${message}`)
   if (!webhookUrl) return
-  await fetch(webhookUrl, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({ content: message, text: message }),
-  }).catch((err) => console.error("webhook delivery failed:", err.message))
+  try {
+    const res = await fetch(webhookUrl, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ content: message, text: message }),
+    })
+    // fetch only rejects on network failure — a 404/401 from a bad webhook
+    // URL resolves normally and would otherwise look like a delivered alert.
+    if (!res.ok) {
+      console.error(`webhook delivery failed: ${res.status} ${res.statusText}`)
+    }
+  } catch (err: any) {
+    console.error("webhook delivery failed:", err.message)
+  }
 }
 
 async function checkItem(
@@ -96,7 +105,10 @@ async function checkItem(
         await notify(
           `${item.name}: price is now $${price}` +
             (previous?.price != null ? ` (was $${previous.price})` : "") +
-            (item.targetPrice != null ? ` — target was $${item.targetPrice}` : "") +
+            // Only claim the target was hit when that's actually why this fired —
+            // otherwise a plain drop-from-previous alert wrongly implied the
+            // target price had been reached.
+            (crossedTarget ? ` — target was $${item.targetPrice}` : "") +
             `\n${item.url}`,
         )
       }
@@ -127,12 +139,14 @@ async function main() {
   const state = await loadJson<Record<string, ItemState>>(statePath, {})
   const solari = new Solari({ apiKey: process.env.SOLARI_API_KEY! })
 
+  let hadFailure = false
   try {
     for (const item of watchlist) {
       try {
         state[item.name] = await checkItem(solari, item, state[item.name])
       } catch (err: any) {
         console.error(`[${item.name}] check failed: ${err.message}`)
+        hadFailure = true
       }
     }
   } finally {
@@ -141,6 +155,12 @@ async function main() {
     // proxy open for connection retries.
     await solari.close()
   }
+
+  // A per-item failure (bad selector, site down, etc.) is swallowed above so
+  // one broken item doesn't stop the rest from being checked — but the run
+  // should still show red in CI, or a broken watch could go unnoticed for
+  // months with the Actions tab reporting all-green the whole time.
+  if (hadFailure) process.exitCode = 1
 }
 
 await main()
