@@ -91,8 +91,12 @@ async function checkItem(
     if (item.mode === "price") {
       const price = parsePrice(text)
       if (price == null) {
-        console.warn(`[${item.name}] could not parse a price out of "${text}"`)
-        return { value: text, checkedAt }
+        // Throw rather than warn-and-continue: a selector pointed at the
+        // wrong element (e.g. a title instead of a price) would otherwise
+        // fail this way on every run forever with nothing to notice it —
+        // the same silent-failure shape as a broken selector, just one step
+        // further along.
+        throw new Error(`selector "${item.selector}" did not resolve to a price: "${text}"`)
       }
 
       const droppedFromPrevious = previous?.price != null && price < previous.price

@@ -15,6 +15,14 @@ For pages that require login (a wishlist, a members-only price), attach a
 State is kept in `state.json` (gitignored) so you only get notified on a
 *change*, not on every scheduled check.
 
+> **`stealth: true` requires a paid Solari plan.** On a free-tier key
+> (including the starter-credit code from console.getsolari.com) launching
+> with `stealth: true` fails with `402 FeatureRequiresPlan`. `proxy` also
+> requires `stealth: true`, so it needs a paid plan too. Leave both unset (the
+> default) to run against plain, non-bot-gated pages on the free tier — the
+> sample watchlist does this. Upgrade to actually reach sites that block
+> automated traffic.
+
 ## Run once, locally
 
 ```bash
