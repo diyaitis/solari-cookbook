@@ -1,0 +1,17 @@
+[
+  {
+    "name": "sample book - price drop",
+    "url": "https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html",
+    "selector": ".product_main .price_color",
+    "mode": "price",
+    "targetPrice": 50,
+    "stealth": false
+  },
+  {
+    "name": "sample book - stock change",
+    "url": "https://books.toscrape.com/catalogue/soumission_998/index.html",
+    "selector": ".product_main .availability",
+    "mode": "text",
+    "stealth": false
+  }
+]
