@@ -96,7 +96,8 @@ async function checkItem(
         await notify(
           `${item.name}: price is now $${price}` +
             (previous?.price != null ? ` (was $${previous.price})` : "") +
-            (item.targetPrice != null ? ` — target was $${item.targetPrice}` : ""),
+            (item.targetPrice != null ? ` — target was $${item.targetPrice}` : "") +
+            `\n${item.url}`,
         )
       }
       console.log(`[${item.name}] $${price}`)
@@ -105,7 +106,9 @@ async function checkItem(
 
     // mode === "text": alert on any change to the watched string.
     if (previous && previous.value !== text) {
-      await notify(`${item.name}: status changed from "${previous.value}" to "${text}"`)
+      await notify(
+        `${item.name}: status changed from "${previous.value}" to "${text}"\n${item.url}`,
+      )
     }
     console.log(`[${item.name}] ${text}`)
     return { value: text, checkedAt }
