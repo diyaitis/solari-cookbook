@@ -1,5 +1,7 @@
 # Price / restock watcher (TypeScript)
 
+[![price-watcher](https://github.com/diyaitis/solari-cookbook/actions/workflows/price-watcher.yml/badge.svg)](https://github.com/diyaitis/solari-cookbook/actions/workflows/price-watcher.yml)
+
 Watch a list of product pages for a price drop or a status change (e.g. "Sold
 out" → "In stock") and get pinged on a webhook when it happens. This is the
 whole idea behind deal-alert and restock-alert products, built on a cloud
