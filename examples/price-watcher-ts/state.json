@@ -2,10 +2,10 @@
   "sample book - price drop": {
     "value": "£51.77",
     "price": 51.77,
-    "checkedAt": "2026-09-03T10:15:28.508Z"
+    "checkedAt": "2026-09-03T14:35:25.036Z"
   },
   "sample book - stock change": {
     "value": "In stock (20 available)",
-    "checkedAt": "2026-09-03T10:15:29.755Z"
+    "checkedAt": "2026-09-03T14:35:26.426Z"
   }
 }
